@@ -423,7 +423,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 1
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -460,7 +460,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab45953779c14504f984b38c3055a7d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI.HomeUI
-  networkManager: {fileID: 26480943}
   buttonServer: {fileID: 336968855}
   buttonHost: {fileID: 92830124}
   buttonClient: {fileID: 1940013868}
