@@ -20,16 +20,19 @@ namespace UI
         private void OnClickServer()
         {
             NetworkManager.Singleton.StartServer();
+            gameObject.SetActive(false);
         }
 
         private void OnClickHost()
         {
             NetworkManager.Singleton.StartHost();
+            gameObject.SetActive(false);
         }
 
         private void OnClickClient()
         {
             NetworkManager.Singleton.StartClient();
+            gameObject.SetActive(false);
         }
     }
 }

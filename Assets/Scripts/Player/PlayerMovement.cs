@@ -5,6 +5,8 @@ namespace Player
 {
     public class PlayerMovement : NetworkBehaviour
     {
+        [SerializeField] private float moveSpeed = 5f;
+        
         public override void OnNetworkSpawn()
         {
             if (IsOwner) 
@@ -29,14 +31,8 @@ namespace Player
 
             if (moveDirection.magnitude > 0)
             {
-                RequestMovementServerRpc(moveDirection * Time.deltaTime);
+                transform.position += moveDirection * (moveSpeed * Time.deltaTime);
             }
-        }
-        
-        [ServerRpc]
-        private void RequestMovementServerRpc(Vector3 movement)
-        {
-            transform.position += movement;
         }
     }
 }
