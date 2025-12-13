@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Player;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -9,7 +10,22 @@ namespace Bullet
         [SerializeField] private float speed = 10f;
         [SerializeField] private float lifeTime = 3f;
         
+        private readonly NetworkVariable<ulong> _ownerClientId = new
+        (
+            0,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Server
+        );
+        
         private Coroutine _despawnRoutine;
+        
+        private void Update()
+        {
+            if (IsServer)
+            {
+                transform.position += transform.forward * (speed * Time.deltaTime);
+            }
+        }
         
         public override void OnNetworkSpawn()
         {
@@ -18,14 +34,6 @@ namespace Bullet
             if (IsServer)
             {
                 _despawnRoutine = StartCoroutine(DespawnAfterDelay(lifeTime));
-            }
-        }
-
-        private void Update()
-        {
-            if (IsServer)
-            {
-                transform.position += transform.forward * (speed * Time.deltaTime);
             }
         }
         
@@ -39,20 +47,45 @@ namespace Bullet
             }
         }
         
+        public void InitLayer(bool isPlayerSide)
+        {
+            int layerName = isPlayerSide 
+                ? LayerMask.NameToLayer("PlayerBullet") 
+                : LayerMask.NameToLayer("EnemyBullet");
+            
+            gameObject.layer = layerName;
+            SetLayerClientRpc(layerName);
+        }
+        
         private void OnTriggerEnter(Collider other)
         {
             if (!IsServer)
             {
                 return;
             }
-
+            
             if (_despawnRoutine != null)
             {
                 StopCoroutine(_despawnRoutine);
-                _despawnRoutine = null; // 참조 초기화
+                _despawnRoutine = null;
             }
-
-            NetworkObject.Despawn();
+            
+            if (other.TryGetComponent<PlayerHealth>(out var playerHealth))
+            {
+                const float damageAmount = 10f;
+                playerHealth.TakeDamage(damageAmount);
+            }
+            
+            if (NetworkObject.IsSpawned)
+            {
+                NetworkObject.Despawn();
+            }
+        }
+        
+        [ClientRpc]
+        private void SetLayerClientRpc(int layer)
+        {
+            gameObject.layer = layer;
         }
     }
 }

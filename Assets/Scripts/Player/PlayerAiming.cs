@@ -55,12 +55,12 @@ namespace Player
 
             if (Input.GetMouseButtonDown(0))
             {
-                FireServerRpc(transform.rotation);
+                FireServerRpc();
             }
         }
         
         [ServerRpc]
-        private void FireServerRpc(Quaternion rotation)
+        private void FireServerRpc()
         {
             GameObject bullet = Instantiate
             (
@@ -69,7 +69,9 @@ namespace Player
                 NetworkObject.transform.rotation
             );
             
-            var bulletNetObj = bullet.GetComponent<NetworkObject>();
+            bullet.layer = LayerMask.NameToLayer("PlayerBullet");
+            
+            NetworkObject bulletNetObj = bullet.GetComponent<NetworkObject>();
             if (bulletNetObj != null)
             {
                 bulletNetObj.Spawn();
