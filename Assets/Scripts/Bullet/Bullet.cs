@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Enemy;
 using Player;
 using Unity.Netcode;
 using UnityEngine;
@@ -70,10 +71,10 @@ namespace Bullet
                 _despawnRoutine = null;
             }
             
-            if (other.TryGetComponent<PlayerHealth>(out var playerHealth))
+            if (other.TryGetComponent<EnemyHealth>(out var enemyHealth))
             {
-                const float damageAmount = 10f;
-                playerHealth.TakeDamage(damageAmount);
+                const int damageAmount = 10;
+                enemyHealth.TakeDamageServerRpc(damageAmount);
             }
             
             if (NetworkObject.IsSpawned)
