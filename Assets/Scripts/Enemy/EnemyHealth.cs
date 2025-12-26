@@ -30,8 +30,6 @@ namespace Enemy
             {
                 
             }
-            
-            Health.Value = newValue;
         }
         
         [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]

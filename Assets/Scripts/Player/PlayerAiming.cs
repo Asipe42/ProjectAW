@@ -69,12 +69,14 @@ namespace Player
                 NetworkObject.transform.rotation
             );
             
-            bullet.layer = LayerMask.NameToLayer("PlayerBullet");
-            
-            NetworkObject bulletNetObj = bullet.GetComponent<NetworkObject>();
-            if (bulletNetObj != null)
+            if (bullet.TryGetComponent<NetworkObject>(out var bulletNetObj))
             {
                 bulletNetObj.Spawn();
+            }
+            
+            if (bullet.TryGetComponent<Bullet.Bullet>(out var bulletComponent))
+            {
+                bulletComponent.InitLayer(isPlayerSide: true);
             }
         }
     }

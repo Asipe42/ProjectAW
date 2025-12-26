@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using Enemy;
-using Player;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -10,16 +9,16 @@ namespace Bullet
     {
         [SerializeField] private float speed = 10f;
         [SerializeField] private float lifeTime = 3f;
-        
-        private readonly NetworkVariable<ulong> _ownerClientId = new
-        (
-            0,
-            NetworkVariableReadPermission.Everyone,
-            NetworkVariableWritePermission.Server
-        );
-        
+
+        private Collider _collider;
         private Coroutine _despawnRoutine;
-        
+
+        private void Awake()
+        {
+            _collider = GetComponent<Collider>();
+            _collider.enabled = false;
+        }
+
         private void Update()
         {
             if (IsServer)
@@ -31,7 +30,7 @@ namespace Bullet
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
-
+            
             if (IsServer)
             {
                 _despawnRoutine = StartCoroutine(DespawnAfterDelay(lifeTime));
@@ -50,12 +49,11 @@ namespace Bullet
         
         public void InitLayer(bool isPlayerSide)
         {
-            int layerName = isPlayerSide 
+            gameObject.layer = isPlayerSide 
                 ? LayerMask.NameToLayer("PlayerBullet") 
                 : LayerMask.NameToLayer("EnemyBullet");
             
-            gameObject.layer = layerName;
-            SetLayerClientRpc(layerName);
+            _collider.enabled = true;
         }
         
         private void OnTriggerEnter(Collider other)
@@ -81,12 +79,6 @@ namespace Bullet
             {
                 NetworkObject.Despawn();
             }
-        }
-        
-        [ClientRpc]
-        private void SetLayerClientRpc(int layer)
-        {
-            gameObject.layer = layer;
         }
     }
 }
