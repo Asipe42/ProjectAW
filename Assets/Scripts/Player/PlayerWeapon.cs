@@ -23,6 +23,20 @@ namespace Player
             if (IsServer)
             {
                 currentAmmo.Value = _activeWeapon.CurrentAmmo;
+                currentAmmo.OnValueChanged += (oldValue, newValue) =>
+                {
+                    UpdateLocalUI(newValue);
+                };
+
+                UpdateLocalUI(currentAmmo.Value);
+            }
+        }
+        
+        private void UpdateLocalUI(int value)
+        {
+            if (UI.AmmoUI.Instance != null)
+            {
+                UI.AmmoUI.Instance.UpdateAmmo(value, _activeWeapon.data.maxAmmo);
             }
         }
         
