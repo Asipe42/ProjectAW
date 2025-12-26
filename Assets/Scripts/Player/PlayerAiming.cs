@@ -7,22 +7,21 @@ namespace Player
     {
         [SerializeField] private LayerMask groundMask;
         
-        [Header("Bullet")]
-        [SerializeField] private GameObject bulletPrefab;
-        [SerializeField] private Transform firePoint;
-        
-        private Camera _playerCamera;
+        private PlayerWeapon _weapon;
+        private Camera _camera;
         
         public override void OnNetworkSpawn()
         {
+            _weapon = GetComponent<PlayerWeapon>();
+            
             if (!IsOwner)
             {
                 enabled = false;
                 return;
             }
 
-            _playerCamera = Camera.main;
-            if (_playerCamera == null)
+            _camera = Camera.main;
+            if (_camera == null)
             {
                 Debug.LogError($"카메라를 찾을 수 없습니다.");
             }
@@ -30,53 +29,41 @@ namespace Player
 
         private void Update()
         {
-            if (!IsOwner || _playerCamera == null)
+            if (!IsOwner || _camera == null)
             {
                 return;
             }
             
-            Ray ray = _playerCamera.ScreenPointToRay(Input.mousePosition);
-            if (!Physics.Raycast(ray, out RaycastHit hit, 100f, groundMask))
-            {
-                return;
-            }
-            
-            Vector3 aimPoint = hit.point;
-            Vector3 direction = aimPoint - transform.position;
-            direction.y = 0;
-
-            if (!(direction.magnitude > 0.1f))
-            {
-                return;
-            }
-            
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = targetRotation;
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                FireServerRpc();
-            }
+            HandleRotation();
+            HandleInput();
         }
         
-        [ServerRpc]
-        private void FireServerRpc()
+        private void HandleRotation()
         {
-            GameObject bullet = Instantiate
-            (
-                bulletPrefab, 
-                firePoint.position, 
-                NetworkObject.transform.rotation
-            );
-            
-            if (bullet.TryGetComponent<NetworkObject>(out var bulletNetObj))
+            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundMask))
             {
-                bulletNetObj.Spawn();
+                Vector3 aimPoint = hit.point;
+                Vector3 direction = aimPoint - transform.position;
+                direction.y = 0;
+
+                if (direction.magnitude > 0.1f)
+                {
+                    transform.rotation = Quaternion.LookRotation(direction);
+                }
             }
-            
-            if (bullet.TryGetComponent<Bullet.Bullet>(out var bulletComponent))
+        }
+
+        private void HandleInput()
+        {
+            if (Input.GetMouseButton(0))
             {
-                bulletComponent.InitLayer(isPlayerSide: true);
+                _weapon.Shoot();
+            }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                _weapon.Reload();
             }
         }
     }

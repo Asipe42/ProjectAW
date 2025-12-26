@@ -24,7 +24,7 @@ namespace Enemy
         
         private void HandleHealthChanged(float oldValue, float newValue)
         {
-            Debug.Log($"적 체력 변경: {oldValue} -> {newValue}");
+            Debug.Log($"적 체력 변경: {oldValue} → {newValue}");
 
             if (newValue <= 0)
             {

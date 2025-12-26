@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: -2863836115715321594}
   - component: {fileID: 4418527526081434870}
   - component: {fileID: 6243521323376939224}
+  - component: {fileID: 7070283676095160510}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -318,8 +319,6 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 64
-  bulletPrefab: {fileID: 4849747006721178495, guid: d8a0cac328fe5d14886fdca147103f66, type: 3}
-  firePoint: {fileID: 7803122179263258861}
 --- !u!114 &6243521323376939224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -333,3 +332,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerHealth
   ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &7070283676095160510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3434418811613513884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 894e51c321e6424aba9fa8b6114dccfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerWeapon
+  ShowTopMostFoldoutHeaderGroup: 1
+  firePoint: {fileID: 7803122179263258861}
+  data: {fileID: 11400000, guid: 0f5147fb6e92e364a8118fdd1ece5dd0, type: 2}
+  currentAmmo:
+    m_InternalValue: 0
+  isReloading:
+    m_InternalValue: 0
