@@ -20,18 +20,26 @@ namespace Player
         {
             _activeWeapon = new Weapon.Weapon(data);
 
+            if (IsOwner)
+            {
+                currentAmmo.OnValueChanged += OnAmmoChanged;
+                UpdateLocalUI(currentAmmo.Value);
+            }
+            
             if (IsServer)
             {
                 currentAmmo.Value = _activeWeapon.CurrentAmmo;
-                currentAmmo.OnValueChanged += (oldValue, newValue) =>
-                {
-                    UpdateLocalUI(newValue);
-                };
-
-                UpdateLocalUI(currentAmmo.Value);
             }
         }
-        
+
+        public override void OnNetworkDespawn()
+        {
+            if (IsOwner)
+            {
+                currentAmmo.OnValueChanged -= OnAmmoChanged;
+            }
+        }
+
         private void UpdateLocalUI(int value)
         {
             if (UI.AmmoUI.Instance != null)
@@ -53,6 +61,14 @@ namespace Player
             if (currentAmmo.Value < _activeWeapon.data.maxAmmo && !isReloading.Value)
             {
                 RequestReloadServerRpc();
+            }
+        }
+        
+        private void OnAmmoChanged(int previousValue, int newValue)
+        {
+            if (IsOwner)
+            {
+                UpdateLocalUI(newValue);
             }
         }
         
